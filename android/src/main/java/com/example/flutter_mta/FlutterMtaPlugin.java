@@ -9,6 +9,10 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 import com.tencent.stat.StatService;
+
+import java.util.Map;
+import java.util.Properties;
+
 import com.tencent.stat.StatConfig;
 
 /** FlutterMtaPlugin */
@@ -29,6 +33,8 @@ public class FlutterMtaPlugin implements MethodCallHandler {
   public void onMethodCall(MethodCall call, Result result) {
     if (call.method.equals("init")) {
       init(call, result);
+    } else if (call.method.equals("trackCustomKVEvent")) {
+      trackCustomKVEvent(call, result);
     } else {
       result.notImplemented();
     }
@@ -50,6 +56,27 @@ public class FlutterMtaPlugin implements MethodCallHandler {
       e.printStackTrace();
       result.success(false);
     }
+  }
 
+  private void trackCustomKVEvent(MethodCall call, Result result) {
+    try {
+      String eventId = call.argument("eventId");
+      Map<String, String> properties = call.argument("properties");
+
+      Activity activity = mRegistrar.activity();
+
+      Properties props = new Properties();
+      if (properties != null) {
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+          props.setProperty(entry.getKey(), entry.getValue());
+        }
+      }
+      StatService.trackCustomKVEvent(activity.getApplicationContext(), eventId, props);
+
+      result.success(true);
+    } catch (Exception e) {
+      e.printStackTrace();
+      result.success(false);
+    }
   }
 }

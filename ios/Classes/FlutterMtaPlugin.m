@@ -14,6 +14,8 @@
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if ([@"init" isEqualToString:call.method]) {
     [self init:call result: result];
+  } else if ([@"trackCustomKVEvent" isEqualToString:call.method]) {
+    [self trackCustomKVEvent:call result: result];
   } else {
     result(FlutterMethodNotImplemented);
   }
@@ -26,6 +28,15 @@
 
   [[MTAConfig getInstance] setDebugEnable:debug];
   [MTA startWithAppkey:appKey];
+  result(@(YES));
+}
+
+- (void)trackCustomKVEvent:(FlutterMethodCall*)call result:(FlutterResult)result {
+  NSString *eventId = call.arguments[@"eventId"];
+  NSDictionary *properties = call.arguments[@"properties"];
+
+  [MTA trackCustomKeyValueEvent:eventId props:properties];
+
   result(@(YES));
 }
 

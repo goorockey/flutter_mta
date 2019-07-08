@@ -15,4 +15,12 @@ class FlutterMta {
       'debug': debug,
     });
   }
+
+  static Future<void> trackCustomKVEvent(final String eventId,
+      {final Map<String, String> properties}) async {
+    await _channel.invokeMethod('trackCustomKVEvent', {
+      'eventId': eventId,
+      'properties': properties,
+    });
+  }
 }
