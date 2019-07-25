@@ -20,7 +20,7 @@ class FlutterMta {
       {final Map<String, String> properties}) async {
     await _channel.invokeMethod('trackCustomKVEvent', {
       'eventId': eventId,
-      'properties': properties,
+      'properties': properties ?? {},
     });
   }
 }
