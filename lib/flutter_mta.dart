@@ -7,8 +7,8 @@ class FlutterMta {
 
   static Future<bool> init(
       {final String androidAppKey = '',
-      final String iosAppKey = '',
-      final bool debug = false}) async {
+        final String iosAppKey = '',
+        final bool debug = false}) async {
     return await _channel.invokeMethod('init', {
       'androidAppKey': androidAppKey,
       'iosAppKey': iosAppKey,
@@ -21,6 +21,24 @@ class FlutterMta {
     await _channel.invokeMethod('trackCustomKVEvent', {
       'eventId': eventId,
       'properties': properties ?? {},
+    });
+  }
+
+  static Future<void> traceBeginPage(final String pageName) async {
+    if (pageName == null || pageName.isEmpty) {
+      return;
+    }
+    await _channel.invokeMethod('trackBeginPage', {
+      'pageName': pageName,
+    });
+  }
+
+  static Future<void> traceEndPage(final String pageName) async {
+    if (pageName == null || pageName.isEmpty) {
+      return;
+    }
+    await _channel.invokeMethod('trackEndPage', {
+      'pageName': pageName,
     });
   }
 }

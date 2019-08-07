@@ -16,6 +16,10 @@
     [self init:call result: result];
   } else if ([@"trackCustomKVEvent" isEqualToString:call.method]) {
     [self trackCustomKVEvent:call result: result];
+  } else if ([@"trackBeginPage" isEqualToString:call.method]) {
+    [self trackBeginPage:call result: result];
+  } else if ([@"trackEndPage" isEqualToString:call.method]) {
+    [self trackEndPage:call result: result];
   } else {
     result(FlutterMethodNotImplemented);
   }
@@ -25,6 +29,7 @@
   NSString *appKey = call.arguments[@"iosAppKey"];
   BOOL debug = call.arguments[@"debug"];
 
+  [[MTAConfig getInstance] setAutoTrackPage:NO];
 
   [[MTAConfig getInstance] setDebugEnable:debug];
   [MTA startWithAppkey:appKey];
@@ -36,6 +41,22 @@
   NSDictionary *properties = call.arguments[@"properties"];
 
   [MTA trackCustomKeyValueEvent:eventId props:properties];
+
+  result(@(YES));
+}
+
+- (void)trackBeginPage:(FlutterMethodCall*)call result:(FlutterResult)result {
+  NSString *pageName = call.arguments[@"pageName"];
+
+  [MTA trackPageViewBegin:pageName];
+
+  result(@(YES));
+}
+
+- (void)trackEndPage:(FlutterMethodCall*)call result:(FlutterResult)result {
+  NSString *pageName = call.arguments[@"pageName"];
+
+  [MTA trackPageViewEnd:pageName];
 
   result(@(YES));
 }
