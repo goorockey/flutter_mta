@@ -16,6 +16,18 @@ class FlutterMta {
     });
   }
 
+  static Future<void> reportCustomAccount({String accountId}) async {
+    await _channel.invokeMethod('reportCustomAccount', {
+      'accountId': accountId,
+    });
+  }
+
+  static Future<void> removeCustomAccount({String accountId}) async {
+    await _channel.invokeMethod('removeCustomAccount', {
+      'accountId': accountId,
+    });
+  }
+
   static Future<void> trackCustomKVEvent(final String eventId,
       {final Map<String, String> properties}) async {
     await _channel.invokeMethod('trackCustomKVEvent', {
