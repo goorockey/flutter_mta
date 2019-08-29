@@ -2,6 +2,7 @@ package com.example.flutter_mta;
 
 import android.app.Application;
 import android.app.Activity;
+import android.text.TextUtils;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -9,6 +10,8 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
+import com.tencent.stat.StatAccount;
+import com.tencent.stat.StatMultiAccount;
 import com.tencent.stat.StatService;
 
 import java.util.Map;
@@ -44,6 +47,10 @@ public class FlutterMtaPlugin implements MethodCallHandler {
       trackBeginPage(call, result);
     } else if (call.method.equals("trackEndPage")) {
       trackEndPage(call, result);
+    } else if (call.method.equals("reportCustomAccount")) {
+      reportCustomAccount(call, result);
+    } else if (call.method.equals("removeCustomAccount")) {
+      removeCustomAccount(call, result);
     } else {
       result.notImplemented();
     }
@@ -112,6 +119,31 @@ public class FlutterMtaPlugin implements MethodCallHandler {
       String pageName = call.argument("pageName");
       StatService.trackEndPage(activity.getApplicationContext(), pageName);
 
+      result.success(true);
+    } catch (Exception e) {
+      e.printStackTrace();
+      result.success(false);
+    }
+  }
+
+  private void reportCustomAccount(MethodCall call, Result result) {
+    try {
+      String account = call.argument("accountId");
+      if (!TextUtils.isEmpty(account)) {
+        StatMultiAccount statMultiAccount = new StatMultiAccount(StatMultiAccount.AccountType.CUSTOM, account);
+        statMultiAccount.setLastTimeSec(System.currentTimeMillis() / 1000);
+        StatService.reportMultiAccount(mRegistrar.context(), statMultiAccount);
+      }
+      result.success(true);
+    } catch (Exception e) {
+      e.printStackTrace();
+      result.success(false);
+    }
+  }
+
+  private void removeCustomAccount(MethodCall call, Result result) {
+    try {
+      StatService.removeMultiAccount(mRegistrar.context(), StatMultiAccount.AccountType.CUSTOM);
       result.success(true);
     } catch (Exception e) {
       e.printStackTrace();
