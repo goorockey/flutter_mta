@@ -58,10 +58,14 @@ public class FlutterMtaPlugin implements MethodCallHandler {
 
   private void init(MethodCall call, Result result) {
     try {
+      Activity activity = mRegistrar.activity();
+      if (activity.getApplicationContext() == null) {
+        result.success(false);
+        return;
+      }
+
       String appKey = call.argument("androidAppKey");
       Boolean debug = call.argument("debug");
-
-      Activity activity = mRegistrar.activity();
 
       // 使用手动统计
       StatConfig.setAntoActivityLifecycleStat(false);
