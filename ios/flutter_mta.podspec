@@ -22,5 +22,6 @@ A new flutter plugin project.
   #s.dependency 'QQ_MTA/Hybrid'
 
   s.ios.deployment_target = '8.0'
+  s.static_framework = true
 end
 
